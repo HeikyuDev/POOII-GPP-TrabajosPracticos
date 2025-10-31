@@ -6,7 +6,7 @@
 
 ---
 
-## 👥 Integrantes del Equipo
+##  Integrantes del Equipo
 
 | Nombre                          | Rol       |
 |---------------------------------|-----------|
@@ -15,38 +15,13 @@
 | Pergher Lucas Maurice           | Estudiante |
 
 ---
-
-## 📋 Índice
-
-1. [Objetivo](#objetivo)
-2. [Escenario del Problema](#escenario-del-problema)
-3. [Análisis y Justificación de Patrones](#análisis-y-justificación-de-patrones)
-4. [Implementación](#implementación)
-5. [Diagrama de Clases UML](#diagrama-de-clases-uml)
-6. [Conclusiones](#conclusiones)
-7. [Referencias](#referencias)
-
----
-
-## 🎯 Objetivo
-
-El objetivo de este trabajo práctico es demostrar la capacidad de:
-
-1. Analizar un conjunto de requerimientos de software
-2. Identificar los problemas de diseño creacional (instanciación) presentes en el sistema
-3. Seleccionar y aplicar de forma adecuada los patrones de diseño **Singleton**, **Factory** (Factory Method o Abstract Factory) y **Builder**
-4. Justificar por escrito las decisiones de diseño tomadas
-5. Modelar la solución mediante un diagrama de clases UML
-
----
-
-## 📦 Escenario del Problema: Sistema de Configuración y Renderizado de Reportes
+##  Escenario del Problema: Sistema de Configuración y Renderizado de Reportes
 
 Se debe diseñar el núcleo de un **sistema de generación de reportes** para una aplicación de análisis de datos. Este sistema será utilizado por múltiples módulos de la aplicación (ej. módulo de finanzas, marketing, RRHH).
 
 El sistema presenta **tres grandes desafíos de diseño** que deben ser resueltos mediante patrones creacionales.
 
-### 🔧 Requerimiento 1: Motor de Renderizado
+###  Requerimiento 1: Motor de Renderizado
 
 **Problema:** El sistema debe exportar reportes en diferentes formatos (PDF, Excel, CSV).
 
@@ -60,7 +35,7 @@ El sistema presenta **tres grandes desafíos de diseño** que deben ser resuelto
 - `ReporteExcel` → `RenderizadorExcel`
 - `ReporteCSV` → `RenderizadorCSV`
 
-### 🏗️ Requerimiento 2: Construcción de Reportes
+###  Requerimiento 2: Construcción de Reportes
 
 **Problema:** Un objeto `Reporte` es una entidad compleja con múltiples parámetros opcionales.
 
@@ -80,7 +55,7 @@ El sistema presenta **tres grandes desafíos de diseño** que deben ser resuelto
 - No se debe usar un constructor con 7 parámetros obligando al cliente a pasar `null`
 - El código debe ser limpio y legible
 
-### ⚙️ Requerimiento 3: Gestor de Configuración Global
+###  Requerimiento 3: Gestor de Configuración Global
 
 **Problema:** Toda la aplicación necesita acceder a configuraciones globales.
 
@@ -96,186 +71,87 @@ El sistema presenta **tres grandes desafíos de diseño** que deben ser resuelto
 
 ---
 
-## 🧩 Análisis y Justificación de Patrones
+##  Desarrollo
 
-### Requerimiento 1: Motor de Renderizado
+### Análisis y Justificación de Patrones
 
-#### Patrón Seleccionado
-- **Factory Method**
+#### Requerimiento 1: Motor de Renderizado
 
-#### Justificación
-*[A completar]*
+##### Patrón Seleccionado
 
-**¿Por qué este patrón es la solución adecuada?**
-- *[Explicar las ventajas del patrón seleccionado]*
+El patrón **Factory Method** propone definir una interfaz para crear un objeto, pero dejar que las subclases decidan qué clase concreta instanciar. Permitiendo que reportes con distinta lógica de renderizado y mejorando la ampliación del código.
 
-**¿Qué problemas evita?**
-- *[Mencionar problemas de acoplamiento]*
-- *[Explicar cómo respeta el principio Abierto/Cerrado]*
+##### Justificación (Problemas identificados)
 
-#### Alternativas Consideradas
-*[Opcional: Mencionar otros patrones evaluados y por qué no fueron seleccionados]*
+El principal problema presente es el código repetido que debe implementarse si se quiere hacer una lógica de creación por cada tipo de reporte, complicando además a la hora de implementar nuevos formatos de exportación, dificultando el mantenimiento del Software.
 
----
+##### ¿Por qué este patrón es la solución adecuada?
 
-### Requerimiento 2: Construcción de Reportes
+Factory Method es la solución adecuada ya que permite crear objetos de distintos tipos (renderizadores de reportes en este caso), sin que el código dependa de sus clases concretas, facilitando además el agregar nuevos formatos, sin la necesidad de modificar el código existente.
 
-#### Patrón Seleccionado
-*[A completar con Builder]*
+##### ¿Qué problemas evita?
 
-#### Justificación
-*[A completar]*
+- Evita el acoplamiento fuerte entre el cliente y las clases concretas de renderizado.
+- Evita duplicar la misma lógica de creación de objetos con variaciones en distintas partes del código.
+- Respeta el principio Abierto/Cerrado (abiertas para extensión, pero cerradas a la modificación), ya que permite agregar nuevos formatos aprovechando el constructor "genérico" para crear una nueva clase para el nuevo formato.
+- Evita errores de mantenimiento, porque la lógica de creación queda centralizada y polimórfica.
 
-**¿Por qué este patrón es la solución adecuada?**
-- *[Explicar las ventajas del patrón Builder]*
+##### Alternativas Consideradas
 
-**¿Qué problemas específicos del "constructor" resuelve?**
-- *[Explicar cómo evita el constructor telescópico]*
-- *[Mencionar la mejora en legibilidad]*
-- *[Explicar el manejo de parámetros opcionales]*
-
-#### Ejemplo de Uso
-```java
-// Ejemplo de cómo se construiría un reporte usando el patrón
-// [A completar con código de ejemplo]
-```
+Además del patrón Factory, se tuvieron en cuenta otros patrones creacionales similares, como su variante **Abstract Factory**, descartado porque debe crearse un solo tipo de objeto (el render), resultando innecesaria su elección. Otro patrón considerado fue **Strategy**, el cual encapsula algoritmos intercambiables para un mismo proceso, pero tampoco resultó el más oportuno ya que Strategy ayudaría a variar la estrategia de renderizado y no el instanciar distintos tipos de clases según el formato escogido.
 
 ---
 
-### Requerimiento 3: Gestor de Configuración Global
+#### Requerimiento 2: Construcción de Reportes
 
-#### Patrón Seleccionado
-*[A completar con Singleton]*
+##### Patrón Seleccionado
 
-#### Justificación
-*[A completar]*
+Considerando que el objeto **Reporte** es una entidad con muchos posibles argumentos, otros incluso opcionales, se evidencia el problema de constructores largos e inentendibles para cada instancia de dicho objeto, necesitando una manera de hacerlo más legible, problema el cual es tratado por el patrón **Builder**.
 
-**¿Por qué este patrón es la solución adecuada?**
-- *[Explicar la necesidad de una única instancia]*
+##### Justificación (Problemas identificados)
 
-**¿Cómo se garantizó la unicidad de la instancia?**
-- *[Explicar la implementación técnica del Singleton]*
-- *[Mencionar consideraciones de thread-safety si aplica]*
+El problema más recurrente es la existencia de un constructor telescópico (múltiples constructores sobrecargados), surgido a causa de tener muchos parámetros a la hora de crear un objeto. Sumado a esto se encuentra el problema de que no se entiende qué parámetro corresponde a cada valor, perdiendo legibilidad y facilitando la confusión.
 
-#### Implementación
-*[Describir brevemente el enfoque: Singleton clásico, Eager initialization, Lazy initialization, etc.]*
+##### ¿Por qué este patrón es la solución adecuada?
 
----
+- Evita constructores largos y sobrecargados.
+- Mejora la legibilidad y seguridad del código (al evitar equivocarse en el orden de los argumentos).
+- Cumple el principio de separación de responsabilidades: el Builder construye, el objeto mantiene su lógica interna.
+- Facilita la extensibilidad sin romper compatibilidad.
 
-## 💻 Implementación
+##### ¿Qué problemas específicos del "constructor" resuelve?
 
-### Estructura del Proyecto
-
-```
-src/
-├── main/
-│   └── java/
-│       ├── patrones/
-│       │   ├── factory/
-│       │   │   ├── Renderizador.java
-│       │   │   ├── RenderizadorPDF.java
-│       │   │   ├── RenderizadorExcel.java
-│       │   │   ├── RenderizadorCSV.java
-│       │   │   └── [Clases del patrón Factory]
-│       │   ├── builder/
-│       │   │   ├── Reporte.java
-│       │   │   ├── ReporteBuilder.java
-│       │   │   └── Orientacion.java
-│       │   └── singleton/
-│       │       └── GestorConfiguracion.java
-│       └── Main.java
-└── test/
-    └── [Clases de prueba]
-```
-
-### Tecnologías Utilizadas
-- **Lenguaje:** Java 17+
-- **Build Tool:** Maven / Gradle
-- **Testing:** JUnit 5
-
-### Instrucciones de Ejecución
-
-```bash
-# Clonar el repositorio
-git clone [URL_DEL_REPOSITORIO]
-
-# Compilar el proyecto
-mvn compile
-
-# Ejecutar la clase Main
-mvn exec:java -Dexec.mainClass="Main"
-
-# Ejecutar los tests
-mvn test
-```
+- Reemplaza el constructor telescópico por un único Builder flexible.
+- Se eliminan los parámetros largos, cada propiedad se configura con un método nombrado e identificable.
+- Solo se configuran los parámetros deseados, los demás mantienen valores por defecto (para los atributos opcionales).
 
 ---
 
-## 📊 Diagrama de Clases UML
+#### Requerimiento 3: Gestor de Configuración Global
 
-### Diagrama General del Sistema
+##### Patrón Seleccionado
 
-*[Insertar aquí el diagrama de clases UML completo]*
+Dado que el sistema necesita acceder a configuraciones comunes y si se opta por un enfoque convencional dónde cada clase crea su propio objeto de configuración, se podría presenciar inconsistencias en las configuraciones, incluso ineficiencias en el rendimiento. Esto evidencia la necesidad de crear y mantener una sola instancia, situación la cual es abordada por el patrón **Singleton**.
 
-```
-[Imagen o código Mermaid/PlantUML del diagrama]
-```
+##### Justificación (Problemas identificados)
 
-### Descripción del Diagrama
+Si cada clase o módulo crea su propio objeto de configuración, podrían existir múltiples versiones de la configuración en memoria, con posibles distintas configuraciones. Además, cargar distintos archivos de configuración, o realizar múltiples intentos de conexión a la base de datos, resulta en dificultades innecesarias del rendimiento.
 
-**Clases Principales:**
-- *[Listar y describir brevemente las clases principales]*
+##### ¿Por qué este patrón es la solución adecuada?
 
-**Relaciones:**
-- *[Describir las relaciones clave entre clases]*
+- Garantiza que haya una única instancia de configuración existente, accesible por todos los componentes y compartida por todos sus módulos.
+- Si la configuración cambia, el cambio se propagará globalmente sin mayores complicaciones.
+- Ahorra recursos al cargar los datos una sola vez.
 
-**Patrones Aplicados:**
-- *[Indicar dónde se visualiza cada patrón en el diagrama]*
+##### ¿Cómo se garantiza la unicidad de la instancia?
 
----
+Singleton es sencillo de implementar ya que se basa en tener un constructor privado, pero que es llamado por un método interno `getInstance()` que comprueba previamente la existencia de una instancia antes de crearla.
 
-## ✅ Conclusiones
+Para casos de entornos concurrentes, debe considerarse que varios hilos pueden intentar crear la instancia al mismo tiempo, siendo necesario implementar sincronización o inicialización segura. Esto es conocido como **Thread-Safety**.
 
-### Logros Alcanzados
-*[A completar con los logros del trabajo]*
+##### Implementación
 
-### Aprendizajes
-*[A completar con los aprendizajes obtenidos]*
-
-### Mejoras Futuras
-*[A completar con posibles extensiones o mejoras]*
-
----
-
-## 📖 Referencias
-
-### Bibliografía
-- Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1994). *Design Patterns: Elements of Reusable Object-Oriented Software*. Addison-Wesley.
-- Bloch, J. (2018). *Effective Java* (3rd Edition). Addison-Wesley.
-
-### Recursos en Línea
-- [Refactoring.Guru - Design Patterns](https://refactoring.guru/design-patterns)
-- [Source Making - Design Patterns](https://sourcemaking.com/design_patterns)
-- [Oracle Java Documentation](https://docs.oracle.com/en/java/)
-
-### Material de la Cátedra
-- *[Agregar referencias a materiales del curso]*
-
----
-
-## 📝 Notas Adicionales
-
-### Decisiones de Diseño
-*[Documentar decisiones importantes que no encajen en otras secciones]*
-
-### Problemas Encontrados y Soluciones
-*[Opcional: Documentar desafíos enfrentados durante el desarrollo]*
-
----
-
-**Fecha de Entrega:** *[A completar]*  
-**Institución:** *[A completar]*  
-**Año Académico:** 2025
+Un enfoque aplicable a este caso, considerando Thread-Safety, puede ser la **Inicialización Temprana**, que consiste en crear la instancia automáticamente al crear la clase (aunque no sea llamada o utilizada), alternativa la cual aborda el problema de múltiples hilos y es muy sencilla de implementar.
 
 ---
 
