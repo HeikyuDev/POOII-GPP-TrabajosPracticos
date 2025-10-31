@@ -2,6 +2,7 @@
 
 import java.time.LocalDate;
 
+
 public class MainDemoBuilder {
     
     public static void main(String[] args) {
@@ -15,7 +16,7 @@ public class MainDemoBuilder {
                 .pieDePagina("Página 1 de 10")
                 .fecha(LocalDate.of(2025, 3, 10))
                 .autor("Equipo Marketing")
-                .orientacion(Orientacion.HORIZONTAL)
+                .orientacion(Reporte.Orientacion.HORIZONTAL)
                 .build();
 
         System.out.println("Reporte 1: " + r1);
